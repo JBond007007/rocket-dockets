@@ -7,23 +7,75 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
+  <div id="page-container" class="show-watermark">
 
   <style>
     body {
       background-color: #FFFFE1;
-      background-image:
-        url('https://transparenttextures.com/patterns/noise.png');
+      background-image: url('https://transparenttextures.com/patterns/noise.png');
       background-repeat: repeat;
       font-family: 'Roboto', sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 10px;
       position: relative;
     }
-  
-    #page-container::before {
+
+    h1 {
+      margin-top: 20px;
+      margin-bottom: 50px;
+      font-size: 48px;
+      text-align: center;
+    }
+
+    #page-container {
+      position: relative;
+      z-index: 1;
+      padding-top: 60px;
+    }
+
+    #show-watermark:before {
+      content: '';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: url('assets/watermark.png') no-repeat center center;
+      background-size: 500px;
+      width: 500px;
+      height: 500px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #receipt-preview {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+      border: 2px dashed #ccc;
+      background-color: #fffbe8;
+      padding: 10px;
+      margin-top: 30px;
+    }
+    #save-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    #scan-title {
+      width: 60%;
+      padding: 8px;
+      font-size: 16px;
+    }
+    /* ADD THIS CLASS TO CONTROL WATERMARK VISIBILITY */
+.show-watermark::before {
   content: '';
-  position: absolute;
-  top: 400%;
+  position: fixed;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: url('assets/watermark.png') no-repeat center center;
@@ -34,29 +86,23 @@
   z-index: 0;
   pointer-events: none;
 }
-
-    }
-  
-    #page-container {
-      position: relative;
-      z-index: 1; /* So content appears above the watermark */
-    }
   </style>
-  
-  
-  </head>
+</head>
 <body>
   <div id="page-container">
     <h1>Scan Receipts Here</h1>
-    
+
     <input type="file" id="receipt-file" accept="image/*,application/pdf" />
-    <div id="receipt-preview" style="margin-top: 20px;">No file selected.</div>
-    <pre id="ocr-output" style="white-space: pre-wrap; margin-top: 20px;"></pre>
 
     <div id="save-section" style="margin-top: 20px; display: none;">
       <input type="text" id="scan-title" placeholder="Enter a title..." style="width: 60%; padding: 8px; font-size: 16px;" />
       <button id="save-scan" class="custom-button" style="margin-left: 10px;">Save Scan</button>
-    </div>    
+    </div>
+    
+    <div id="receipt-preview"></div>
+    <pre id="ocr-output" style="white-space: pre-wrap; margin-top: 20px;"></pre>
+    
+    </div>
   </div>
 
   <!-- Libraries -->
@@ -134,26 +180,25 @@
     }
 
     function findDateInText(text) {
-  const patterns = [
-    /\b\d{1,2} [A-Za-z]{3,9},? \d{4}\b/,    // 12 May 2025 or 12 May, 2025
-    /\b\d{1,2} [A-Za-z]{3,9}\d{4}\b/,       // 12 May2025
-    /\b\d{1,2}[A-Za-z]{3,9}\d{4}\b/,        // 12May2025
-    /\b\d{1,2} [A-Za-z]{3,9} \d{2}\b/,      // 12 May 25
-    /\b\d{1,2} [A-Za-z]{3,9}\d{2}\b/,       // 12 May25
-    /\b\d{1,2}[A-Za-z]{3,9}\d{2}\b/,        // 12May25
-    /\b\d{4}-\d{2}-\d{2}\b/,                // 2025-05-12
-    /\b\d{2}-\d{2}-\d{4}\b/,                // 12-05-2025
-    /\b\d{2}\/\d{2}\/\d{4}\b/               // 12/05/2025
-  ];
+      const patterns = [
+        /\b\d{1,2} [A-Za-z]{3,9},? \d{4}\b/,
+        /\b\d{1,2} [A-Za-z]{3,9}\d{4}\b/,
+        /\b\d{1,2}[A-Za-z]{3,9}\d{4}\b/,
+        /\b\d{1,2} [A-Za-z]{3,9} \d{2}\b/,
+        /\b\d{1,2} [A-Za-z]{3,9}\d{2}\b/,
+        /\b\d{1,2}[A-Za-z]{3,9}\d{2}\b/,
+        /\b\d{4}-\d{2}-\d{2}\b/,
+        /\b\d{2}-\d{2}-\d{4}\b/,
+        /\b\d{2}\/\d{2}\/\d{4}\b/
+      ];
 
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match) return match[0].replace(/[.,]$/, ''); // strip trailing comma/period
-  }
+      for (const pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) return match[0].replace(/[.,]$/, '');
+      }
 
-  return null;
-}
-   }
+      return null;
+    }
 
     document.getElementById('receipt-file').addEventListener('change', async function (event) {
       const file = event.target.files[0];
@@ -180,6 +225,10 @@
           canvas.width = viewport.width;
           canvas.height = viewport.height;
           await page.render({ canvasContext: context, viewport }).promise;
+          previewContainer.innerHTML = '';
+          previewContainer.style.display = 'flex';
+          document.getElementById('page-container').classList.remove('show-watermark');
+          previewContainer.style.border = 'none';
           previewContainer.appendChild(canvas);
 
           try {
@@ -187,7 +236,7 @@
               Tesseract.recognize(canvas, 'eng'),
               30000,
               () => {
-                outputContainer.textContent = 'Image file too large, please resize file. Or image quality poor, please retake photo.';
+                outputContainer.textContent = 'Image file too large or poor quality.';
                 document.getElementById('save-section').style.display = 'none';
               }
             );
@@ -199,7 +248,7 @@
             const date = findDateInText(lastOCRText);
             document.getElementById('scan-title').value = date ? `${businessName} – ${date}` : businessName;
 
-            document.getElementById('save-section').style.display = 'block';
+            document.getElementById('save-section').style.display = 'flex';
           } catch (err) {
             outputContainer.textContent = 'Error during OCR: ' + err.message;
           }
@@ -211,15 +260,18 @@
         img.style.maxWidth = '100%';
 
         img.onload = async () => {
+          previewContainer.innerHTML = '';
+          previewContainer.style.display = 'flex';
+          document.getElementById('page-container').classList.remove('show-watermark');
+          previewContainer.style.border = 'none';
           previewContainer.appendChild(img);
-          setTimeout(() => URL.revokeObjectURL(img.src), 5000);
 
           try {
             const result = await runWithTimeout(
               Tesseract.recognize(img.src, 'eng'),
               30000,
               () => {
-                outputContainer.textContent = 'Image file too large, please resize file. Or image quality poor, please retake photo.';
+                outputContainer.textContent = 'Image file too large or poor quality.';
                 document.getElementById('save-section').style.display = 'none';
               }
             );
@@ -237,7 +289,7 @@
             const date = findDateInText(lastOCRText);
             document.getElementById('scan-title').value = date ? `${businessName} – ${date}` : businessName;
 
-            document.getElementById('save-section').style.display = 'block';
+            document.getElementById('save-section').style.display = 'flex';
           } catch (err) {
             outputContainer.textContent = 'Error during OCR: ' + err.message;
           }
