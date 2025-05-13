@@ -7,93 +7,106 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
-  <div id="page-container" class="show-watermark">
+  
 
-  <style>
-    body {
-      background-color: #FFFFE1;
-      background-image: url('https://transparenttextures.com/patterns/noise.png');
-      background-repeat: repeat;
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      padding: 10px;
-      position: relative;
-    }
-
-    h1 {
-      margin-top: 20px;
-      margin-bottom: 50px;
-      font-size: 48px;
-      text-align: center;
-    }
-
-    #page-container {
-      position: relative;
-      z-index: 1;
-      padding-top: 60px;
-    }
-
-    #show-watermark:before {
-      content: '';
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: url('assets/watermark.png') no-repeat center center;
-      background-size: 500px;
-      width: 500px;
-      height: 500px;
-      opacity: 0.15;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    #receipt-preview {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      min-height: 300px;
-      border: 2px dashed #ccc;
-      background-color: #fffbe8;
-      padding: 10px;
-      margin-top: 30px;
-    }
-    #save-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    #scan-title {
-      width: 60%;
-      padding: 8px;
-      font-size: 16px;
-    }
-    /* ADD THIS CLASS TO CONTROL WATERMARK VISIBILITY */
-.show-watermark::before {
-  content: '';
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: url('assets/watermark.png') no-repeat center center;
-  background-size: 500px;
-  width: 500px;
-  height: 500px;
-  opacity: 0.15;
-  z-index: 0;
-  pointer-events: none;
-}
-  </style>
+    <style>
+        body {
+          background-color: #FFFFE1;
+          background-image: url('https://transparenttextures.com/patterns/noise.png');
+          background-repeat: repeat;
+          font-family: 'Roboto', sans-serif;
+          margin: 0;
+          padding: 10px;
+          position: relative;
+        }
+      
+        h1 {
+          margin-top: 20px;
+          margin-bottom: 50px;
+          font-size: 48px;
+          text-align: center;
+        }
+      
+        #page-container {
+          position: relative;
+          z-index: 1;
+          padding-top: 60px;
+        }
+      
+        /* ✅ Watermark visibility controller */
+        .show-watermark::before {
+          content: '';
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: url('assets/watermark.png') no-repeat center center;
+          background-size: 500px;
+          width: 500px;
+          height: 500px;
+          opacity: 0.15;
+          z-index: 0;
+          pointer-events: none;
+        }
+      
+        /* ✅ Receipt preview container */
+        #receipt-preview {
+          display: none;
+          justify-content: center;
+          align-items: center;
+          min-height: 300px;
+          border: 2px dashed #ccc;
+          background-color: #fffbe8;
+          padding: 10px;
+          margin-top: 30px;
+        }
+      
+        /* ✅ Save section layout */
+        #save-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          margin-top: 20px;
+        }
+      
+        #scan-title {
+          display: block;
+          width: 60%;
+          padding: 20px;
+          font-size: 30px;
+        }
+      
+        /* ✅ Scanning pulse text */
+        .loading-message {
+          text-align: center;
+          font-size: 24px;
+          font-weight: bold;
+          color: #888;
+          animation: pulse 1.5s infinite;
+          margin-top: 20px;
+          display: none;
+        }
+      
+        @keyframes pulse {
+          0% { opacity: 0.2; }
+          50% { opacity: 1; }
+          100% { opacity: 0.2; }
+        }
+      </style>
+      
 </head>
 <body>
-  <div id="page-container">
-    <h1>Scan Receipts Here</h1>
+    <div id="page-container" class="show-watermark">
+      <h1>Scan Receipts Here</h1>
 
-    <input type="file" id="receipt-file" accept="image/*,application/pdf" />
+        <input type="file" id="receipt-file" accept="image/*,application/pdf" />
 
+    <div id="loading-status" class="loading-message" style="display: none;">
+        Scanning Data Fields...
+      </div>
+      
+      
     <div id="save-section" style="margin-top: 20px; display: none;">
       <input type="text" id="scan-title" placeholder="Enter a title..." style="width: 60%; padding: 8px; font-size: 16px;" />
       <button id="save-scan" class="custom-button" style="margin-left: 10px;">Save Scan</button>
@@ -206,11 +219,17 @@
       const outputContainer = document.getElementById('ocr-output');
       previewContainer.innerHTML = '';
       outputContainer.innerHTML = '';
+    
+    document.getElementById('save-section').style.display = 'none';
+ 
+
 
       if (!file) return;
 
       const fileType = file.type;
       outputContainer.textContent = 'Scanning...';
+      document.getElementById('loading-status').style.display = 'block';
+
 
       if (fileType === 'application/pdf') {
         const reader = new FileReader();
@@ -242,6 +261,8 @@
             );
             lastOCRText = result.data.text.trim() || '[No text found]';
             outputContainer.textContent = lastOCRText;
+            document.getElementById('loading-status').style.display = 'none';
+
 
             const headerTitle = await extractHeaderText(canvas);
             const businessName = headerTitle || suggestTitleFromText(lastOCRText);
@@ -277,6 +298,8 @@
             );
             lastOCRText = result.data.text.trim() || '[No text found]';
             outputContainer.textContent = lastOCRText;
+            document.getElementById('loading-status').style.display = 'none';
+
 
             const canvas = document.createElement('canvas');
             canvas.width = img.naturalWidth;
