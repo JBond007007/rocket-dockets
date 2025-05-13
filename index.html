@@ -1,0 +1,283 @@
+<!-- In <head> -->
+    <link rel="stylesheet" href="assets/style.css">
+
+    <!-- Before </body> -->
+    <script src="assets/script.js" defer></script>
+    <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <title>Rocket Dockets</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <!-- Google Font -->
+          <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+          <!-- Font Awesome for Icons -->
+          <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+          <style>
+            body {
+              background-color: #b4b8b4;
+              background-image: linear-gradient(135deg, #b4b8b4, #e2e4e2);
+              font-family: 'Roboto', sans-serif;
+              margin: 0;
+              padding: 0;
+            }
+            #page-container {
+              text-align: center;
+              padding: 0 10px;
+              max-width: 1200px;
+              margin: 0 auto;
+            }
+        
+            /* Nav Bar */
+            #desktop-navbar {
+              background-color: #1e597d;
+              color: white;
+              padding: 0 30px;
+              border-radius: 25px;
+              margin: 30px auto 20px auto;
+              max-width: 95vw;
+              width: 1100px;
+              box-sizing: border-box;
+              height: 60px;
+              display: flex;
+              align-items: center;
+            }
+            .navbar-flex {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              width: 100%;
+              height: 100%;
+            }
+            .pc-nav {
+              display: flex;
+              gap: 35px;
+              align-items: center;
+              height: 100%;
+            }
+            .pc-nav a {
+              color: white;
+              text-decoration: none;
+              font-weight: 500;
+              font-size: 20px;
+              transition: color 0.2s;
+            }
+            .pc-nav a:hover {
+              color: #FAC898;
+            }
+            .right-logo {
+              width: 40px;
+              height: 40px;
+              object-fit: contain;
+              margin-left: 30px;
+              display: block;
+            }
+        
+            /* Welcome Message */
+            #welcome-message {
+              font-family: 'Orbitron', sans-serif;
+              font-size: 2.5rem;
+              color: #1D72B8;
+              margin: 30px 0 10px 0;
+              width: 100%;
+              text-align: center;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+            }
+            .welcome-emoji {
+              font-size: 2.5rem;
+              margin-left: 10px;
+            }
+        
+            /* Hero Section */
+            .pc-hero-content {
+              text-align: center;
+              margin-top: 30px;
+            }
+            .pc-stars {
+              font-size: 18px;
+              margin-bottom: 10px;
+            }
+            .pc-hero-content h1 {
+              font-size: 32px;
+              line-height: 1.4;
+              margin-bottom: 20px;
+            }
+            .pc-hero-content p {
+              font-size: 18px;
+              margin-bottom: 30px;
+            }
+            /* Greeting and Action */
+            #greeting-container-pc, #greeting-container-mobile {
+              margin: 20px 0 10px 0;
+              text-align: center;
+            }
+            #greeting-pc, #greeting-mobile {
+              font-size: 28px;
+              color: #333;
+              letter-spacing: 1px;
+              margin: 10px 0 5px 0;
+            }
+            #user-name-pc, #user-name-mobile {
+              font-weight: bold;
+              color: #1D72B8;
+            }
+            .action-message {
+              font-size: 20px;
+              margin-bottom: 15px;
+              color: #333;
+            }
+            /* Buttons */
+            .desktop-buttons {
+              display: flex;
+              justify-content: center;
+              gap: 20px;
+              margin-top: 30px;
+              flex-wrap: wrap;
+            }
+            .mobile-buttons {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 20px;
+              margin-top: 30px;
+            }
+            .custom-button {
+              width: 200px;
+              height: 55px;
+              background-color: #FAC898;
+              color: black;
+              border: none;
+              border-radius: 12px;
+              font-size: 18px;
+              font-weight: 500;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+              font-family: 'Roboto', sans-serif;
+            }
+            .custom-button i {
+              margin-right: 8px;
+            }
+            .custom-button:hover {
+              background-color: #8BAED6;
+              transform: scale(1.05);
+              box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            }
+            /* Mobile Logo */
+            .mobile-logo {
+              width: 120px;
+              height: auto;
+              margin: 15px auto 10px auto;
+              display: block;
+            }
+            /* Responsive Styles */
+            #desktop-landing, #desktop-navbar { display: block; }
+            #mobile-landing { display: none; }
+            @media (max-width: 768px) {
+              #desktop-landing, #desktop-navbar { display: none !important; }
+              #mobile-landing { display: block !important; }
+              #welcome-message {
+                font-size: 24px;
+                margin-top: 20px;
+                justify-content: center;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div id="page-container">
+            <!-- Desktop Nav Bar -->
+            <div id="desktop-navbar">
+              <div class="navbar-flex">
+                <nav class="pc-nav">
+                  <a href="#">Receipts</a>
+                  <a href="#">Invoices</a>
+                  <a href="#">Delivery Dockets</a>
+                  <a href="#">Help Desk</a>
+                </nav>
+                <img src="https://i.imgur.com/vILe90Z.png" class="right-logo" alt="Right Logo">
+              </div>
+            </div>
+        
+            <!-- Welcome Message -->
+            <h2 id="welcome-message">
+              Welcome to Rocket Dockets
+            </h2>
+        
+            <!-- Desktop Content -->
+            <div id="desktop-landing">
+              <div class="pc-hero-content">
+                <div class="pc-stars">
+                  <span>⭐⭐⭐⭐⭐</span> <span>100s of 5-Star Reviews</span>
+                </div>
+                <h1>Designed To Optimise Your Business Needs.<br>Scan or Upload All Your Business Dockets For Faster And More Accurate Record Keeping</h1>
+                <p>All dockets are stored in our Cloud Software<br>and can be viewed or downloaded at your convenience.</p>
+              </div>
+              <div id="greeting-container-pc">
+                <h1 id="greeting-pc">Hello, <span id="user-name-pc"></span> 😃</h1>
+                <div class="action-message">What Would You Like To Do?</div>
+              </div>
+              <div class="desktop-buttons">
+                <button class="custom-button" onclick="location.href='scan-receipt.html'">
+                    <i class="fas fa-camera"></i><span>Scan Receipt</span>
+                  </button>
+                  
+                  <button class="custom-button" onclick="location.href='upload-invoice.html'">
+                    <i class="fas fa-file-invoice-dollar"></i><span>Upload Invoice</span>
+                  </button>
+                  
+                  <button class="custom-button" onclick="location.href='scan-docket.html'">
+                    <i class="fas fa-shipping-fast"></i><span>Scan Delivery Docket</span>
+                  </button>
+                  
+                  <button class="custom-button" onclick="location.href='manual-entry.html'">
+                    <i class="fas fa-keyboard"></i><span>Enter Manual Docket</span>
+                  </button>
+                  
+                  <button class="custom-button" onclick="location.href='history.html'">
+                    <i class="fas fa-history"></i><span>History</span>
+                  </button>
+              </div>
+            </div>
+        
+            <!-- Mobile/Tablet Content -->
+            <div id="mobile-landing">
+              <img src="https://i.imgur.com/PvTpzf8.jpeg" alt="Rocket Logo" class="mobile-logo" />
+              <h1 id="greeting-mobile">Hello, <span id="user-name-mobile"></span> 😃</h1>
+              <div class="action-message">What Would You Like To Do?</div>
+              <div class="mobile-buttons">
+                <button class="custom-button" onclick="location.href='scan-receipt.html'">
+                    <i class="fas fa-camera"></i><span>Scan Receipt</span>
+                  </button>
+                  
+                  <button class="custom-button" onclick="location.href='upload-invoice.html'">
+                    <i class="fas fa-file-invoice-dollar"></i><span>Upload Invoice</span>
+                  </button>
+                  
+                  <button class="custom-button" onclick="location.href='scan-docket.html'">
+                    <i class="fas fa-shipping-fast"></i><span>Scan Delivery Docket</span>
+                  </button>
+                  
+                  <button class="custom-button" onclick="location.href='manual-entry.html'">
+                    <i class="fas fa-keyboard"></i><span>Enter Manual Docket</span>
+                  </button>
+                  
+                  <button class="custom-button" onclick="location.href='history.html'">
+                    <i class="fas fa-history"></i><span>History</span>
+                  </button>
+              </div>
+            </div>
+          </div>
+          <script>
+            // Set username dynamically if needed
+            const username = localStorage.getItem('username') || 'User';
+            document.getElementById('user-name-pc').textContent = username;
+            document.getElementById('user-name-mobile').textContent = username;
+          </script>
+        </body>
+        </html>

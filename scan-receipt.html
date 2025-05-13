@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scan Receipts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+
+  <style>
+    body {
+      background-color: #FFFFE1;
+      background-image:
+        url('https://transparenttextures.com/patterns/noise.png');
+      background-repeat: repeat;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+  
+    #page-container::before {
+  content: '';
+  position: absolute;
+  top: 400%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: url('assets/watermark.png') no-repeat center center;
+  background-size: 500px;
+  width: 500px;
+  height: 500px;
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+}
+
+    }
+  
+    #page-container {
+      position: relative;
+      z-index: 1; /* So content appears above the watermark */
+    }
+  </style>
+  
+  
+  </head>
+<body>
+  <div id="page-container">
+    <h1>Scan Receipts Here</h1>
+    
+    <input type="file" id="receipt-file" accept="image/*,application/pdf" />
+    <div id="receipt-preview" style="margin-top: 20px;">No file selected.</div>
+    <pre id="ocr-output" style="white-space: pre-wrap; margin-top: 20px;"></pre>
+
+    <div id="save-section" style="margin-top: 20px; display: none;">
+      <input type="text" id="scan-title" placeholder="Enter a title..." style="width: 60%; padding: 8px; font-size: 16px;" />
+      <button id="save-scan" class="custom-button" style="margin-left: 10px;">Save Scan</button>
+    </div>    
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://unpkg.com/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+  <script>
+    let lastOCRText = '';
+
+    function runWithTimeout(promise, ms, onTimeout) {
+      let timeoutId;
+      const timeout = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => {
+          onTimeout();
+          reject(new Error('OCR timed out'));
+        }, ms);
+      });
+
+      return Promise.race([
+        promise.finally(() => clearTimeout(timeoutId)),
+        timeout
+      ]);
+    }
+
+    async function extractHeaderText(canvas) {
+      const width = canvas.width;
+      const height = canvas.height;
+
+      const cropCanvas = document.createElement('canvas');
+      cropCanvas.width = width * 0.5;
+      cropCanvas.height = height * 0.25;
+
+      const ctx = cropCanvas.getContext('2d');
+      ctx.drawImage(canvas, 0, 0, cropCanvas.width, cropCanvas.height, 0, 0, cropCanvas.width, cropCanvas.height);
+
+      const result = await Tesseract.recognize(cropCanvas, 'eng');
+      const headerText = result.data.text.split('\n').find(line => line.trim().length > 3) || '';
+
+      return headerText.trim();
+    }
+
+    function suggestTitleFromText(text) {
+      const lines = text
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 3 && /^[a-zA-Z]/.test(line));
+
+      const businessTerms = ['limited', 'ltd', 'company', 'co.', 'inc', 'corp', 'energy', 'group', 'services', 'trust'];
+      const filtered = lines.filter(line => !line.includes('http') && !line.includes('@'));
+
+      const scoredLines = filtered.map((line, index) => {
+        const score = getScore(line, index);
+        return { line, score };
+      });
+
+      const best = scoredLines.sort((a, b) => b.score - a.score)[0];
+      return best ? best.line.slice(0, 80) : 'Untitled Scan';
+
+      function getScore(line, position) {
+        let score = 0;
+        if (position < 10) score += 2;
+        if (position < 5) score += 2;
+
+        const capitalWords = line.match(/\b[A-Z][a-z]+/g);
+        if (capitalWords) score += capitalWords.length;
+
+        const lower = line.toLowerCase();
+        if (businessTerms.some(term => lower.includes(term))) score += 2;
+
+        const wordCount = line.split(/\s+/).length;
+        if (wordCount <= 4) score += 2;
+
+        return score;
+      }
+    }
+
+    function findDateInText(text) {
+  const patterns = [
+    /\b\d{1,2} [A-Za-z]{3,9},? \d{4}\b/,    // 12 May 2025 or 12 May, 2025
+    /\b\d{1,2} [A-Za-z]{3,9}\d{4}\b/,       // 12 May2025
+    /\b\d{1,2}[A-Za-z]{3,9}\d{4}\b/,        // 12May2025
+    /\b\d{1,2} [A-Za-z]{3,9} \d{2}\b/,      // 12 May 25
+    /\b\d{1,2} [A-Za-z]{3,9}\d{2}\b/,       // 12 May25
+    /\b\d{1,2}[A-Za-z]{3,9}\d{2}\b/,        // 12May25
+    /\b\d{4}-\d{2}-\d{2}\b/,                // 2025-05-12
+    /\b\d{2}-\d{2}-\d{4}\b/,                // 12-05-2025
+    /\b\d{2}\/\d{2}\/\d{4}\b/               // 12/05/2025
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return match[0].replace(/[.,]$/, ''); // strip trailing comma/period
+  }
+
+  return null;
+}
+   }
+
+    document.getElementById('receipt-file').addEventListener('change', async function (event) {
+      const file = event.target.files[0];
+      const previewContainer = document.getElementById('receipt-preview');
+      const outputContainer = document.getElementById('ocr-output');
+      previewContainer.innerHTML = '';
+      outputContainer.innerHTML = '';
+
+      if (!file) return;
+
+      const fileType = file.type;
+      outputContainer.textContent = 'Scanning...';
+
+      if (fileType === 'application/pdf') {
+        const reader = new FileReader();
+        reader.onload = async function () {
+          const typedarray = new Uint8Array(reader.result);
+          const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+          const page = await pdf.getPage(1);
+          const scale = 2.0;
+          const viewport = page.getViewport({ scale });
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          await page.render({ canvasContext: context, viewport }).promise;
+          previewContainer.appendChild(canvas);
+
+          try {
+            const result = await runWithTimeout(
+              Tesseract.recognize(canvas, 'eng'),
+              30000,
+              () => {
+                outputContainer.textContent = 'Image file too large, please resize file. Or image quality poor, please retake photo.';
+                document.getElementById('save-section').style.display = 'none';
+              }
+            );
+            lastOCRText = result.data.text.trim() || '[No text found]';
+            outputContainer.textContent = lastOCRText;
+
+            const headerTitle = await extractHeaderText(canvas);
+            const businessName = headerTitle || suggestTitleFromText(lastOCRText);
+            const date = findDateInText(lastOCRText);
+            document.getElementById('scan-title').value = date ? `${businessName} – ${date}` : businessName;
+
+            document.getElementById('save-section').style.display = 'block';
+          } catch (err) {
+            outputContainer.textContent = 'Error during OCR: ' + err.message;
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (fileType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.style.maxWidth = '100%';
+
+        img.onload = async () => {
+          previewContainer.appendChild(img);
+          setTimeout(() => URL.revokeObjectURL(img.src), 5000);
+
+          try {
+            const result = await runWithTimeout(
+              Tesseract.recognize(img.src, 'eng'),
+              30000,
+              () => {
+                outputContainer.textContent = 'Image file too large, please resize file. Or image quality poor, please retake photo.';
+                document.getElementById('save-section').style.display = 'none';
+              }
+            );
+            lastOCRText = result.data.text.trim() || '[No text found]';
+            outputContainer.textContent = lastOCRText;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+
+            const headerTitle = await extractHeaderText(canvas);
+            const businessName = headerTitle || suggestTitleFromText(lastOCRText);
+            const date = findDateInText(lastOCRText);
+            document.getElementById('scan-title').value = date ? `${businessName} – ${date}` : businessName;
+
+            document.getElementById('save-section').style.display = 'block';
+          } catch (err) {
+            outputContainer.textContent = 'Error during OCR: ' + err.message;
+          }
+        };
+      } else {
+        outputContainer.textContent = 'Unsupported file type. Please upload an image or PDF.';
+      }
+    });
+
+    document.getElementById('save-scan').addEventListener('click', () => {
+      const title = document.getElementById('scan-title').value.trim();
+      if (!title || !lastOCRText) {
+        alert('Please enter a title and perform a scan first.');
+        return;
+      }
+
+      const savedScans = JSON.parse(localStorage.getItem('scans') || '[]');
+      savedScans.push({
+        title,
+        text: lastOCRText,
+        date: new Date().toISOString()
+      });
+
+      localStorage.setItem('scans', JSON.stringify(savedScans));
+      alert('Scan saved!');
+      document.getElementById('scan-title').value = '';
+    });
+  </script>
+</body>
+</html>
