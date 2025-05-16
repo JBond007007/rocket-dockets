@@ -7,178 +7,193 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
-  
 
-    <style>
-        body {
-          background-color: #FFFFE1;
-          background-image: url('https://transparenttextures.com/patterns/noise.png');
-          background-repeat: repeat;
-          font-family: 'Roboto', sans-serif;
-          margin: 0;
-          padding: 10px;
-          position: relative;
-        }
-      
-        h1 {
-          margin-top: 20px;
-          margin-bottom: 50px;
-          font-size: 48px;
-          text-align: center;
-        }
-      
-        #page-container {
-          position: relative;
-          z-index: 1;
-          padding-top: 60px;
-        }
-      
-        /* ✅ Watermark visibility controller */
-        .show-watermark::before {
-          content: '';
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: url('assets/watermark.png') no-repeat center center;
-          background-size: 500px;
-          width: 500px;
-          height: 500px;
-          opacity: 0.15;
-          z-index: 0;
-          pointer-events: none;
-        }
-      
-        /* ✅ Receipt preview container */
-        #receipt-preview {
-        display: none;
-        justify-content: center;
-        align-items: center;
-        background-color: #fffbe8;
-        padding: 10px;
-        margin: 30px auto 0 auto;
-        max-width: 500px;
-        max-height: 800px;
-        overflow: auto;
-        }
+  <style>
+    body {
+      background-color: #FFFFE1;
+      background-image: url('https://transparenttextures.com/patterns/noise.png');
+      background-repeat: repeat;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 10px;
+      position: relative;
+    }
 
-        #receipt-preview img,
-        #receipt-preview canvas {
-          max-width: 100%;
-          max-height: 800px;
-          object-fit: contain;
-          display: block;
-          margin: 0 auto;
-        }
+    h1 {
+      margin-top: 20px;
+      margin-bottom: 50px;
+      font-size: 48px;
+      text-align: center;
+    }
 
-        /* ✅ Save section layout */
-        #save-section {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 10px;
-          margin-top: 20px;
-        }
-      
-        #scan-title {
-          display: block;
-          width: 60%;
-          padding: 20px;
-          font-size: 30px;
-        }
-      
-        /* ✅ Scanning pulse text */
-        .loading-message {
-          text-align: center;
-          font-size: 24px;
-          font-weight: bold;
-          color: #888;
-          animation: pulse 1.5s infinite;
-          margin-top: 20px;
-          display: none;
-        }
-      
-        @keyframes pulse {
-          0% { opacity: 0.2; }
-          50% { opacity: 1; }
-          100% { opacity: 0.2; }
-        }
-      </style>
-      
+    #page-container {
+      position: relative;
+      z-index: 1;
+      padding-top: 60px;
+    }
+
+    .show-watermark::before {
+      content: '';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: url('assets/watermark.png') no-repeat center center;
+      background-size: 500px;
+      width: 500px;
+      height: 500px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #receipt-preview {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background-color: #fffbe8;
+      padding: 10px;
+      margin: 30px auto 0 auto;
+      max-width: 500px;
+      max-height: 800px;
+      overflow: auto;
+    }
+
+    #receipt-preview img,
+    #receipt-preview canvas {
+      max-width: 100%;
+      max-height: 800px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+
+    #save-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    #scan-title {
+      display: block;
+      width: 60%;
+      padding: 20px;
+      font-size: 30px;
+    }
+
+    .loading-message {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #888;
+      animation: pulse 1.5s infinite;
+      margin-top: 20px;
+      display: none;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.2; }
+      50% { opacity: 1; }
+      100% { opacity: 0.2; }
+    }
+  </style>
 </head>
 <body>
-    <div id="page-container" class="show-watermark">
-      <h1>Scan Receipts Here</h1>
+  <div id="page-container" class="show-watermark">
+    <h1>Scan Receipts Here</h1>
+    <input type="file" id="receipt-file" accept="image/*,application/pdf" />
 
-        <input type="file" id="receipt-file" accept="image/*,application/pdf" />
+    <div id="loading-status" class="loading-message">Scanning Data Fields...</div>
 
-    <div id="loading-status" class="loading-message" style="display: none;">
-        Scanning Data Fields...
-      </div>
-      
-      
-    <div id="save-section" style="margin-top: 20px; display: none;">
+    <div id="save-section" style="display: none;">
       <input type="text" id="scan-title" placeholder="Enter a title..." style="width: 60%; padding: 8px; font-size: 16px;" />
       <button id="save-scan" class="custom-button" style="margin-left: 10px;">Save Scan</button>
     </div>
-    
+
     <div id="receipt-preview"></div>
     <pre id="ocr-output" style="white-space: pre-wrap; margin-top: 20px;"></pre>
-    </div>
+  </div>
 
-  <!-- Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
   <script>
     document.getElementById('receipt-file').addEventListener('change', function (event) {
       const file = event.target.files[0];
       const preview = document.getElementById('receipt-preview');
-      preview.innerHTML = ''; // Clear previous
+      const output = document.getElementById('ocr-output');
 
       if (!file) return;
 
-      // Show container
+      preview.innerHTML = '';
+      output.textContent = '';
       preview.style.display = 'flex';
       document.getElementById('page-container').classList.remove('show-watermark');
 
-
-      // PDF preview
-      if (file.type === 'application/pdf') {
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.onload = () => URL.revokeObjectURL(img.src);
+        preview.appendChild(img);
+        sendToBackend(file);
+      } else if (file.type === 'application/pdf') {
         const reader = new FileReader();
         reader.onload = function () {
           const typedarray = new Uint8Array(reader.result);
-
           pdfjsLib.getDocument({ data: typedarray }).promise.then(function (pdf) {
             pdf.getPage(1).then(function (page) {
               const scale = 1.5;
-              const viewport = page.getViewport({ scale: scale });
-
+              const viewport = page.getViewport({ scale });
               const canvas = document.createElement('canvas');
               const context = canvas.getContext('2d');
               canvas.height = viewport.height;
               canvas.width = viewport.width;
 
-              page.render({ canvasContext: context, viewport: viewport }).promise.then(function () {
+              page.render({ canvasContext: context, viewport }).promise.then(() => {
                 preview.appendChild(canvas);
+                canvas.toBlob(blob => {
+                  sendToBackend(blob);
+                }, 'image/jpeg');
               });
             });
           });
         };
         reader.readAsArrayBuffer(file);
-      }
-
-      // Image preview
-      else if (file.type.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
-        img.onload = function () {
-          URL.revokeObjectURL(img.src);
-        };
-        preview.appendChild(img);
+      } else {
+        output.textContent = 'Unsupported file type.';
       }
     });
-  </script>
 
+    async function sendToBackend(fileBlob) {
+      const apiUrl = 'https://vkt4yoguyb.execute-api.us-east-1.amazonaws.com/prod'; // ✅ Replace with your actual URL
+
+      document.getElementById('loading-status').style.display = 'block';
+
+      const reader = new FileReader();
+      reader.readAsDataURL(fileBlob);
+      reader.onload = async function () {
+        const base64 = reader.result.split(',')[1];
+
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ body: base64 })
+          });
+
+          if (!response.ok) throw new Error('Azure processing failed');
+
+          const data = await response.json();
+          document.getElementById('ocr-output').textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          document.getElementById('ocr-output').textContent = 'Error: ' + err.message;
+        } finally {
+          document.getElementById('loading-status').style.display = 'none';
+        }
+      };
+    }
+  </script>
 </body>
 </html>
