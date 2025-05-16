@@ -51,16 +51,27 @@
       
         /* ✅ Receipt preview container */
         #receipt-preview {
-          display: none;
-          justify-content: center;
-          align-items: center;
-          min-height: 300px;
-          border: 2px dashed #ccc;
-          background-color: #fffbe8;
-          padding: 10px;
-          margin-top: 30px;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        border: 2px dashed #ccc;
+        background-color: #fffbe8;
+        padding: 10px;
+        margin: 30px auto 0 auto;
+        max-width: 500px;
+        max-height: 600px;
+        overflow: auto;
         }
-      
+
+        #receipt-preview img,
+        #receipt-preview canvas {
+          max-width: 100%;
+          max-height: 800px;
+          object-fit: contain;
+          display: block;
+          margin: 0 auto;
+        }
+
         /* ✅ Save section layout */
         #save-section {
           display: flex;
@@ -114,8 +125,7 @@
     
     <div id="receipt-preview"></div>
     <pre id="ocr-output" style="white-space: pre-wrap; margin-top: 20px;"></pre>
-    
-    </div>
+  
   </div>
 
   <!-- Libraries -->
