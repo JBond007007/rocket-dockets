@@ -1,4 +1,6 @@
-![Rocket Dockets Banner](./banner.png)
+<p align="center">
+  <img src="./banner.png" alt="Rocket Dockets Banner" width="400" />
+</p>
 
 # 🚀 Rocket Dockets
 
