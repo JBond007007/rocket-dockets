@@ -1,3 +1,5 @@
+![Rocket Dockets Banner](./banner.png)
+
 # 🚀 Rocket Dockets
 
 **Rocket Dockets** is a lightweight, AI-powered document management platform designed for fast, intelligent processing of financial documents—receipts, invoices, and delivery dockets. Built for freelancers, small businesses, and growing enterprises, it offers real-time OCR scanning, procurement traceability, and a secure, serverless backend infrastructure.
