@@ -1,6 +1,17 @@
-<p align="center">
+<img width="392" alt="image" src="https://github.com/user-attachments/assets/7ea14b0c-e749-45e2-b114-d508ec6519f6" /><p align="center">
   <img src="./banner.png" alt="Rocket Dockets Banner" width="400" />
 </p>
+
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Status-In%20Development-orange" alt="Status" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.0.0-blueviolet" alt="Version" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Tech-HTML%20%7C%20JS%20%7C%20Azure%20OCR-blue" alt="Tech Stack" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Backend-AWS_Lambda_%7C_API_Gateway-yellowgreen" alt="Backend" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Payments-Stripe-6772e5" alt="Stripe" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Deployed%20on-Cursor%20+%20Netlify-lightgrey" alt="Hosting" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/License-Proprietary-inactive" alt="License" /></a>
+</p>
+
 
 # 🚀 Rocket Dockets
 
@@ -8,20 +19,19 @@
 
 ---
 
-## 🔍 Table of Contents
-
-- [Overview](#overview)
-- [Core Features](#core-features)
-- [Target Users](#target-users)
-- [Technology Stack](#technology-stack)
-- [Architecture Overview](#architecture-overview)
-- [Getting Started](#getting-started)
-- [Pricing Model](#pricing-model)
-- [Roadmap](#roadmap)
-- [Security & Compliance](#security--compliance)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+## 📚 Table of Contents
+- [Overview](#-overview)
+- [Core Features](#-core-features)
+- [Target Users](#-target-users)
+- [Technology Stack](#-technology-stack)
+- [Architecture Overview](#-architecture-overview)
+- [Getting Started](#-getting-started)
+- [Pricing Model](#-pricing-model)
+- [Roadmap](#-roadmap)
+- [Security & Compliance](#-security--compliance)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
 
 ---
 
@@ -62,6 +72,21 @@ This tool is especially valuable for those managing frequent financial paperwork
 - **Freelancers & Tradespeople**
 - **Procurement/Operations Managers**
 - **Automation Enthusiasts (NZ, AUS, USA, CAN)**
+
+---
+
+## 🛣 Roadmap
+
+| Phase        | Feature                                     | Status       | Notes                              |
+|--------------|---------------------------------------------|--------------|------------------------------------|
+| Phase 1      | OCR Scan Preview (Azure OCR)                | ✅ Complete   | Image + PDF supported              |
+| Phase 1.5    | Watermark & Preview Scaling Fix             | ✅ Complete   | Visual UX improvements             |
+| Phase 2      | Duplicate Detection                         | 🔄 In Progress | Server-side hash logic via Lambda |
+| Phase 2      | Delivery Docket to Invoice Matching         | 🕓 Planned    | Adds B2B procurement traceability  |
+| Phase 3      | Stripe Billing Integration (Freemium Model) | 🕓 Planned    | Dynamic tiered features            |
+| Phase 3      | Supabase/Firebase Integration               | 🕓 Planned    | Transition from Sheets to DB       |
+| Phase 4      | AI-Powered Auto-Categorization              | 🕓 Planned    | GPT-style tagging engine           |
+| Phase 5      | White-label / API Client Version            | 🕓 Planned    | B2B enablement                     |
 
 ---
 
